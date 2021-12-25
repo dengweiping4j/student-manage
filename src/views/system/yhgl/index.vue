@@ -50,11 +50,10 @@
     <!-- 编辑弹出框 -->
     <edit
         :title="title"
-        :form="detailData"
-        :visible="visible"
+        :form="detail"
+        :visible="visible.show"
         @save="save"
-        @cancel="close"
-    ></edit>
+        @cancel="close"></edit>
   </div>
 </template>
 
@@ -71,10 +70,18 @@ export default {
   },
   methods: {
     close() {
-      this.visible = false;
+      this.visible.show = false;
     },
     save(item) {
-      console.log(item)
+      requestPost('system/user/register', item).then((res) => {
+        if (res.code === 200) {
+          this.visible.show = false;
+          ElMessage.success('保存成功');
+        } else {
+          console.log(res)
+          ElMessage.error('保存失败：' + res.detail);
+        }
+      });
     }
   },
   setup() {
@@ -93,7 +100,7 @@ export default {
 
     // 获取表格数据
     const getData = () => {
-      requestPost(pageParam, query).then((res) => {
+      requestPost('system/user/findAll', query, pageParam).then((res) => {
         if (res.data) {
           tableData.value = res.data.content;
           totalElements.value = res.data.totalElements || 0;
@@ -130,55 +137,44 @@ export default {
     };
 
     // 表格编辑时弹窗和保存
-    const detailData = {
-      userName: '张三'
-    };
-    let form = reactive({
-      name: "",
-      address: "",
+    const visible = reactive({
+      show: false
     });
 
     let title = '新增';
-    let visible = true;
     const handleAdd = () => {
       title = '新增';
-      visible = true;
+      visible.show = true;
     }
 
     let idx = -1;
+    const detail = reactive({
+      userName: ''
+    });
     const handleEdit = (index, row) => {
       title = '修改';
       idx = index;
-
-      Object.keys(form).forEach((item) => {
-        form[item] = row[item];
+      Object.keys(detail).forEach((item) => {
+        detail[item] = row[item];
       });
-      visible = true;
+      visible.show = true;
     };
 
-    const saveEdit = () => {
-      visible = false;
-      ElMessage.success(`修改第 ${idx + 1} 行成功`);
-      Object.keys(form).forEach((item) => {
-        tableData.value[idx][item] = form[item];
-      });
-    };
+    console.log('detail', detail);
 
     return {
       pageParam,
       query,
       tableData,
+      detail,
       totalElements,
       visible,
-      form,
       title,
-      detailData,
       handleSearch,
       handlePageChange,
       handleDelete,
       handleEdit,
-      handleAdd,
-      saveEdit,
+      handleAdd
     };
   },
 };

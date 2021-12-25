@@ -2,10 +2,10 @@
   <el-dialog :title="title" v-model="visible" width="30%">
     <el-form label-width="70px">
       <el-form-item label="用户名">
-        <el-input v-model="userName" placeholder="请输入内容"></el-input>
+        <el-input v-model="form.userName" placeholder="请输入内容"></el-input>
       </el-form-item>
       <el-form-item label="角色">
-        <el-input v-model="orgId" placeholder="请输入内容"></el-input>
+        <el-input v-model="form.orgId" placeholder="请输入内容"></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -23,8 +23,12 @@ export default {
   props: ["title", "visible", "form"],
   data() {
     return {
-      userName: this.form.userName,
-      orgId: this.form.orgId
+      form: this.form,
+    }
+  },
+  computed: {
+    form: function () {
+      return this.form
     }
   },
   methods: {
@@ -37,6 +41,6 @@ export default {
         orgId: this.orgId
       });
     }
-  },
+  }
 };
 </script>

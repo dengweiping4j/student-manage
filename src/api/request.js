@@ -8,17 +8,17 @@ export const fetchData = query => {
   });
 };
 
-export const requestGet = query => {
+export const requestGet = (url,params) => {
   return request({
-    url: 'system/user/findAll',
+    url: url,
     method: 'get',
-    params: query
+    params: params
   });
 };
 
-export const requestPost = (params,query) => {
+export const requestPost = (url,query,params) => {
   return request({
-    url: 'system/user/findAll',
+    url: url,
     method: 'post',
     params: params,
     data: query
