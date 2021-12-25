@@ -46,7 +46,7 @@ export default {
         title: "系统首页",
       },
       {
-        icon: "el-icon-lx-cascades",
+        icon: "el-icon-lx-info",
         index: "/basic",
         title: "基础信息管理",
         subs: [
@@ -65,70 +65,72 @@ export default {
         ]
       },
       {
-        icon: "el-icon-lx-copy",
-        index: "/tabs",
-        title: "tab选项卡",
+        icon: "el-icon-lx-news",
+        index: "/xjgl",
+        title: "学籍管理",
       },
       {
         icon: "el-icon-lx-calendar",
-        index: "3",
-        title: "表单相关",
-        subs: [
-          {
-            index: "/form",
-            title: "基本表单",
-          },
-          {
-            index: "/upload",
-            title: "文件上传",
-          },
-          {
-            index: "4",
-            title: "三级菜单",
-            subs: [
-              {
-                index: "/editor",
-                title: "富文本编辑器",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        icon: "el-icon-lx-emoji",
-        index: "/icon",
-        title: "自定义图标",
-      },
-      {
-        icon: "el-icon-pie-chart",
-        index: "/charts",
-        title: "schart图表",
-      },
-      {
-        icon: "el-icon-lx-global",
-        index: "/i18n",
-        title: "国际化功能",
+        index: "/qjgl",
+        title: "请假管理",
       },
       {
         icon: "el-icon-lx-warn",
-        index: "7",
-        title: "错误处理",
-        subs: [
-          {
-            index: "/permission",
-            title: "权限测试",
-          },
-          {
-            index: "/404",
-            title: "404页面",
-          },
-        ],
+        index: "/wjcf",
+        title: "违纪处分",
       },
       {
-        icon: "el-icon-lx-redpacket_fill",
-        index: "/donate",
-        title: "支持作者",
+        icon: "el-icon-lx-emoji",
+        index: "/knsgl",
+        title: "困难生管理",
       },
+      {
+        icon: "el-icon-lx-like",
+        index: "/pjpy",
+        title: "评奖评优",
+      },
+      {
+        icon: "el-icon-lx-roundcheck",
+        index: "/zhcp",
+        title: "综合测评",
+        subs: [
+          {
+            index: "/ksgl",
+            title: "考试管理"
+          },
+          {
+            index: "/cjgl",
+            title: "成绩管理"
+          },
+          {
+            index: "/cjfx",
+            title: "成绩分析"
+          }
+        ]
+      },
+      {
+        icon: "el-icon-lx-apps",
+        index: "/system",
+        title: "系统管理",
+        subs: [
+          {
+            index: "/yhgl",
+            title: "用户管理"
+          },
+          {
+            index: "/cdgl",
+            title: "菜单管理"
+          },
+          {
+            index: "/jsgl",
+            title: "角色管理"
+          },
+          {
+            index: "/zdgl",
+            title: "字典管理"
+          }
+        ]
+      }
     ];
 
     const route = useRoute();

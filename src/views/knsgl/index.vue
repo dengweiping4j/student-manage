@@ -3,7 +3,7 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 基础表格
+                    <i class="el-icon-lx-cascades"></i> 学生信息
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
@@ -80,10 +80,10 @@
 <script>
 import { ref, reactive } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { fetchData } from "../api/index";
+import { fetchData } from "/src/api/index";
 
 export default {
-    name: "basetable",
+    name: "basic-student",
     setup() {
         const query = reactive({
             address: "",
