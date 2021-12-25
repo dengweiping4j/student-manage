@@ -9,6 +9,7 @@
     </div>
     <div class="container">
       <div class="handle-box">
+        <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增</el-button>
         <el-select v-model="query.roleId" placeholder="角色" class="handle-select mr10">
           <el-option key="1" label="全部" value=""></el-option>
           <el-option key="2" label="学生" value="1001"></el-option>
@@ -47,22 +48,13 @@
     </div>
 
     <!-- 编辑弹出框 -->
-    <el-dialog title="编辑" v-model="editVisible" width="30%">
-      <el-form label-width="70px">
-        <el-form-item label="用户名">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="地址">
-          <el-input v-model="form.address"></el-input>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="editVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="saveEdit">确 定</el-button>
-                </span>
-      </template>
-    </el-dialog>
+    <edit
+        :title="title"
+        :form="detailData"
+        :visible="visible"
+        @save="save"
+        @cancel="close"
+    ></edit>
   </div>
 </template>
 
@@ -70,21 +62,31 @@
 import {ref, reactive} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {fetchData, requestPost, requestGet} from "/src/api/request";
+import edit from "./edit.vue";
 
 export default {
   name: "basic-student",
+  components: {
+    edit,
+  },
+  methods: {
+    close() {
+      this.visible = false;
+    },
+    save(item) {
+      console.log(item)
+    }
+  },
   setup() {
     const pageParam = reactive({
       pageNum: 1,
       pageSize: 10,
     })
-    
+
     const query = reactive({
-      userName:'',
-      roleId:''
+      userName: '',
+      roleId: ''
     });
-    
-    const body = {};
 
     const tableData = ref([]);
     const totalElements = ref(0);
@@ -128,21 +130,34 @@ export default {
     };
 
     // 表格编辑时弹窗和保存
-    const editVisible = ref(false);
+    const detailData = {
+      userName: '张三'
+    };
     let form = reactive({
       name: "",
       address: "",
     });
+
+    let title = '新增';
+    let visible = true;
+    const handleAdd = () => {
+      title = '新增';
+      visible = true;
+    }
+
     let idx = -1;
     const handleEdit = (index, row) => {
+      title = '修改';
       idx = index;
+
       Object.keys(form).forEach((item) => {
         form[item] = row[item];
       });
-      editVisible.value = true;
+      visible = true;
     };
+
     const saveEdit = () => {
-      editVisible.value = false;
+      visible = false;
       ElMessage.success(`修改第 ${idx + 1} 行成功`);
       Object.keys(form).forEach((item) => {
         tableData.value[idx][item] = form[item];
@@ -154,49 +169,21 @@ export default {
       query,
       tableData,
       totalElements,
-      editVisible,
+      visible,
       form,
+      title,
+      detailData,
       handleSearch,
       handlePageChange,
       handleDelete,
       handleEdit,
+      handleAdd,
       saveEdit,
     };
   },
 };
 </script>
 
-<style scoped>
-.handle-box {
-  margin-bottom: 20px;
-}
-
-.handle-select {
-  width: 120px;
-}
-
-.handle-input {
-  width: 300px;
-  display: inline-block;
-}
-
-.table {
-  width: 100%;
-  font-size: 14px;
-}
-
-.red {
-  color: #ff0000;
-}
-
-.mr10 {
-  margin-right: 10px;
-}
-
-.table-td-thumb {
-  display: block;
-  margin: auto;
-  width: 40px;
-  height: 40px;
-}
+<style>
+@import "index.css";
 </style>
