@@ -1,17 +1,35 @@
 <template>
   <el-dialog :title="modalInfo.title" v-model="visible" width="30%">
     <el-form label-width="70px">
+
       <el-form-item label="用户名">
-        <el-input v-model="form.userName" placeholder="请输入内容" maxlength="10" show-word-limit></el-input>
+        <el-input
+            v-model="form.userName"
+            placeholder="请输入内容"
+            maxlength="10"
+            :disabled="modalInfo.type==='edit'"
+            show-word-limit
+        >
+        </el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input type="password" v-model="form.password" placeholder="请输入密码"></el-input>
+        <el-input
+            show-password
+            v-model="form.password"
+            placeholder="请输入密码"
+            :disabled="modalInfo.type==='edit'"
+        >
+        </el-input>
       </el-form-item>
       <el-form-item label="角色">
-        <el-select v-model="form.roleId" placeholder="角色" class="handle-select mr10"
-                   @change="roleChange">
-          <el-option v-for="item in roleList" :key="item.id" :label="item.roleName"
-                     :value="item.id"></el-option>
+        <el-select v-model="form.roleId" placeholder="请选择用户角色" class="handle-select mr10" @change="roleChange">
+          <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+          >
+          </el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -29,8 +47,8 @@ export default {
   props: ["modalInfo", "visible", "form", "roleList"],
   data() {
     return {
-      form: this.form,
-      roleList: this.roleList
+      roleList: this.roleList,
+      form: this.form
     }
   },
   computed: {

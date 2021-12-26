@@ -10,9 +10,9 @@
     <div class="container">
       <div class="handle-box">
         <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增</el-button>
-        <el-select v-model="query.roleId" placeholder="角色" class="handle-select mr10"
+        <el-select v-model="query.roleId" class="handle-select mr10"
                    @change="queryRoleChange">
-          <el-option key="1" label="全部" value=""></el-option>
+          <el-option key="1" label="全部角色" value=""></el-option>
           <el-option v-for="item in roleList" :key="item.id" :label="item.roleName"
                      :value="item.id"></el-option>
         </el-select>
@@ -47,7 +47,14 @@
     </div>
 
     <!-- 编辑弹出框 -->
-    <EditModal :modalInfo="modalInfo" :form="detail" :roleList="roleList" :visible="visible" @save="save" @cancel="close">
+    <EditModal
+        :modalInfo="modalInfo"
+        :form="detail"
+        :roleList="roleList"
+        :visible="visible"
+        @save="save"
+        @cancel="close"
+    >
     </EditModal>
   </div>
 </template>
@@ -60,7 +67,7 @@ import EditModal from "./EditModal.vue";
 import {requestPut} from "../../../api/request";
 
 export default {
-  name: "basic-student",
+  name: "user",
   components: {
     EditModal,
   },
@@ -140,26 +147,27 @@ export default {
      * @param item
      */
     save(item) {
-      requestPost('system/user/register', item).then((res) => {
-        if (res.code === 200) {
-          this.visible = false;
-          this.getData();
-          ElMessage.success('保存成功');
-          this.queryData();
-        } else {
-          ElMessage.error('保存失败：' + res.detail);
-        }
-      });
-      requestPut('system/user/update', item).then((res) => {
-        if (res.code === 200) {
-          this.visible = false;
-          this.getData();
-          ElMessage.success('保存成功');
-          this.queryData();
-        } else {
-          ElMessage.error('保存失败：' + res.detail);
-        }
-      });
+      if (this.modalInfo.type === 'add') {
+        requestPost('system/user/register', item).then((res) => {
+          if (res.code === 200) {
+            this.visible = false;
+            ElMessage.success('保存成功');
+            this.queryData();
+          } else {
+            ElMessage.error('保存失败：' + res.detail);
+          }
+        });
+      } else {
+        requestPut('system/user/update', item).then((res) => {
+          if (res.code === 200) {
+            this.visible = false;
+            ElMessage.success('保存成功');
+            this.queryData();
+          } else {
+            ElMessage.error('保存失败：' + res.detail);
+          }
+        });
+      }
     },
 
     /**
@@ -225,7 +233,12 @@ export default {
     };
     getRoleList();
 
-    const detail = reactive({});
+    const detail = reactive({
+      id: '',
+      userName: '',
+      password: '',
+      roleId: ''
+    });
 
     return {
       pageParam,
