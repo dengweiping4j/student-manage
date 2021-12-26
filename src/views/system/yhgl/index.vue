@@ -10,14 +10,14 @@
     <div class="container">
       <div class="handle-box">
         <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增</el-button>
-        <el-select v-model="query.roleId" placeholder="角色" class="handle-select mr10">
+        <el-select v-model="query.roleId" placeholder="角色" class="handle-select mr10"
+                   @change="queryRoleChange">
           <el-option key="1" label="全部" value=""></el-option>
-          <el-option key="2" label="学生" value="1001"></el-option>
-          <el-option key="3" label="教师" value="1003"></el-option>
-          <el-option key="4" label="管理员" value="1004"></el-option>
+          <el-option v-for="item in roleList" :key="item.id" :label="item.roleName"
+                     :value="item.id"></el-option>
         </el-select>
         <el-input v-model="query.userName" placeholder="用户名" class="handle-input mr10"></el-input>
-        <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
       </div>
       <el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
         <el-table-column prop="userName" label="用户名"/>
@@ -28,14 +28,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="roleName" label="角色" align="center"/>
-
         <el-table-column prop="crtTime" label="注册时间"></el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
-            <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑
+            <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑
             </el-button>
             <el-button type="text" icon="el-icon-delete" class="red"
-                       @click="handleDelete(scope.$index, scope.row)">删除
+                       @click="handleDelete(scope.row)">删除
             </el-button>
           </template>
         </el-table-column>
@@ -43,45 +42,149 @@
       <div class="pagination">
         <el-pagination background layout="total, prev, pager, next" :current-page="pageParam.pageNum"
                        :page-size="pageParam.pageSize" :total="totalElements"
-                       @current-change="handlePageChange"></el-pagination>
+                       @current-change="pageChange"></el-pagination>
       </div>
     </div>
 
     <!-- 编辑弹出框 -->
-    <edit
-        :title="title"
-        :form="detail"
-        :visible="visible.show"
-        @save="save"
-        @cancel="close"></edit>
+    <EditModal :modalInfo="modalInfo" :form="detail" :roleList="roleList" :visible="visible" @save="save" @cancel="close">
+    </EditModal>
   </div>
 </template>
 
 <script>
 import {ref, reactive} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {fetchData, requestPost, requestGet} from "/src/api/request";
-import edit from "./edit.vue";
+import {requestPost, requestDelete} from "/src/api/request";
+import EditModal from "./EditModal.vue";
+import {requestPut} from "../../../api/request";
 
 export default {
   name: "basic-student",
   components: {
-    edit,
+    EditModal,
   },
   methods: {
-    close() {
-      this.visible.show = false;
+    /**
+     * 获取数据
+     * @param query
+     * @param pageParam
+     */
+    queryData() {
+      requestPost('system/user/findAll', this.query, this.pageParam).then((res) => {
+        if (res.data) {
+          this.tableData = res.data.content;
+          this.totalElements = res.data.totalElements || 0;
+        }
+      });
     },
+
+    /**
+     * 搜索
+     */
+    search() {
+      this.pageParam.pageNum = 1;
+      this.queryData();
+    },
+
+    queryRoleChange(value) {
+      this.query.roleId = value;
+      this.queryData();
+    },
+
+    /**
+     * 页码变化
+     * @param pageNum
+     */
+    pageChange(pageNum) {
+      this.pageParam.pageNum = pageNum;
+      this.queryData();
+    },
+
+    /**
+     * 打开新增窗口
+     */
+    handleAdd() {
+      this.modalInfo = {
+        type: 'add',
+        title: '新增'
+      }
+      this.visible = true;
+    },
+
+    /**
+     * 打开编辑窗口
+     * @param index
+     * @param row
+     */
+    handleEdit(row) {
+      this.modalInfo = {
+        type: 'edit',
+        title: '编辑'
+      }
+      Object.keys(this.detail).forEach((item) => {
+        this.detail[item] = row[item];
+      });
+      this.visible = true;
+    },
+
+    /**
+     * 关闭窗口
+     */
+    close() {
+      this.visible = false;
+    },
+
+    /**
+     * 保存
+     * @param item
+     */
     save(item) {
       requestPost('system/user/register', item).then((res) => {
         if (res.code === 200) {
-          this.visible.show = false;
+          this.visible = false;
+          this.getData();
           ElMessage.success('保存成功');
+          this.queryData();
         } else {
-          console.log(res)
           ElMessage.error('保存失败：' + res.detail);
         }
       });
+      requestPut('system/user/update', item).then((res) => {
+        if (res.code === 200) {
+          this.visible = false;
+          this.getData();
+          ElMessage.success('保存成功');
+          this.queryData();
+        } else {
+          ElMessage.error('保存失败：' + res.detail);
+        }
+      });
+    },
+
+    /**
+     * 删除
+     * @param row
+     */
+    handleDelete(row) {
+      // 二次确认删除
+      ElMessageBox.confirm("确定要删除吗？", "提示", {
+        type: "warning",
+      })
+          .then(() => {
+            requestDelete('system/user/delete/' + row.id).then((res) => {
+              if (res.code === 200) {
+                this.visible = false;
+                ElMessage.success('删除成功');
+                this.pageParam.pageNum = 1;
+                this.queryData();
+              } else {
+                ElMessage.error('删除失败：' + res.detail);
+              }
+            });
+          })
+          .catch(() => {
+          });
     }
   },
   setup() {
@@ -89,14 +192,17 @@ export default {
       pageNum: 1,
       pageSize: 10,
     })
-
     const query = reactive({
       userName: '',
       roleId: ''
     });
-
     const tableData = ref([]);
     const totalElements = ref(0);
+    const visible = ref(false);
+    const modalInfo = reactive({
+      type: 'add',
+      title: '新增'
+    });
 
     // 获取表格数据
     const getData = () => {
@@ -107,74 +213,29 @@ export default {
         }
       });
     };
-
     getData();
 
-    // 查询操作
-    const handleSearch = () => {
-      pageParam.pageNum = 1;
-      getData();
-    };
-
-    // 分页导航
-    const handlePageChange = (val) => {
-      pageParam.pageNum = val;
-      getData();
-    };
-
-    // 删除操作
-    const handleDelete = (index) => {
-      // 二次确认删除
-      ElMessageBox.confirm("确定要删除吗？", "提示", {
-        type: "warning",
-      })
-          .then(() => {
-            ElMessage.success("删除成功");
-            tableData.value.splice(index, 1);
-          })
-          .catch(() => {
-          });
-    };
-
-    // 表格编辑时弹窗和保存
-    const visible = reactive({
-      show: false
-    });
-
-    let title = '新增';
-    const handleAdd = () => {
-      title = '新增';
-      visible.show = true;
-    }
-
-    let idx = -1;
-    const detail = reactive({
-      userName: ''
-    });
-    const handleEdit = (index, row) => {
-      title = '修改';
-      idx = index;
-      Object.keys(detail).forEach((item) => {
-        detail[item] = row[item];
+    const roleList = ref([]);
+    const getRoleList = () => {
+      requestPost('system/role/find').then((res) => {
+        if (res.data) {
+          roleList.value = res.data;
+        }
       });
-      visible.show = true;
     };
+    getRoleList();
 
-    console.log('detail', detail);
+    const detail = reactive({});
 
     return {
       pageParam,
       query,
       tableData,
+      roleList,
       detail,
       totalElements,
       visible,
-      title,
-      handleSearch,
-      handlePageChange,
-      handleDelete,
-      handleEdit,
-      handleAdd
+      modalInfo,
     };
   },
 };
