@@ -114,19 +114,16 @@ export default {
         title: "系统管理",
         subs: [
           {
-            index: "/yhgl",
+            index: "/user",
             title: "用户管理"
-          },
-          {
-            index: "/cdgl",
-            title: "菜单管理"
-          },
-          {
-            index: "/jsgl",
+          }, {
+            index: "/role",
             title: "角色管理"
-          },
-          {
-            index: "/zdgl",
+          }, {
+            index: "/menu",
+            title: "菜单管理"
+          }, {
+            index: "/dict",
             title: "字典管理"
           }
         ]

@@ -148,7 +148,7 @@ export default {
      */
     save(item) {
       if (this.modalInfo.type === 'add') {
-        requestPost('system/user/register', item).then((res) => {
+        requestPost('system/user/save', item).then((res) => {
           if (res.code === 200) {
             this.visible = false;
             ElMessage.success('保存成功');

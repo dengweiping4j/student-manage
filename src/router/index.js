@@ -96,33 +96,33 @@ const routes = [
         },
         component: () => import ( /* webpackChunkName: "basicstudent" */ "../views/zhcp/cjfx/index.vue")
       }, {
-        path: "/yhgl",
-        name: "yhgl",
+        path: "/user",
+        name: "user",
         meta: {
           title: '用户管理'
         },
-        component: () => import ( /* webpackChunkName: "basicstudent" */ "../views/system/yhgl/index.vue")
+        component: () => import ( /* webpackChunkName: "user" */ "../views/system/user/index.vue")
       }, {
-        path: "/cdgl",
-        name: "cdgl",
-        meta: {
-          title: '菜单管理'
-        },
-        component: () => import ( /* webpackChunkName: "basicstudent" */ "../views/system/cdgl/index.vue")
-      }, {
-        path: "/jsgl",
-        name: "jsgl",
+        path: "/role",
+        name: "role",
         meta: {
           title: '角色管理'
         },
-        component: () => import ( /* webpackChunkName: "basicstudent" */ "../views/system/jsgl/index.vue")
+        component: () => import ( /* webpackChunkName: "role" */ "../views/system/role/index.vue")
       }, {
-        path: "/zdgl",
-        name: "zdgl",
+        path: "/menu",
+        name: "menu",
+        meta: {
+          title: '菜单管理'
+        },
+        component: () => import ( /* webpackChunkName: "menu" */ "../views/system/menu/index.vue")
+      }, {
+        path: "/dict",
+        name: "dict",
         meta: {
           title: '字典管理'
         },
-        component: () => import ( /* webpackChunkName: "basicstudent" */ "../views/system/zdgl/index.vue")
+        component: () => import ( /* webpackChunkName: "dict" */ "../views/system/dict/index.vue")
       }
     ]
   }, {

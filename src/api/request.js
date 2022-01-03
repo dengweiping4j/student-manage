@@ -37,7 +37,7 @@ export const requestDelete = (url, query, params) => {
 export const requestPut = (url, data, params) => {
   return request({
     url: url,
-    method: 'post',
+    method: 'put',
     params: params,
     data: data|| {}
   });

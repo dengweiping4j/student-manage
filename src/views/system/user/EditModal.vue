@@ -7,7 +7,7 @@
             v-model="form.userName"
             placeholder="请输入内容"
             maxlength="10"
-            :disabled="modalInfo.type==='edit'"
+            :disabled="modalInfo.type === 'edit'"
             show-word-limit
         >
         </el-input>
@@ -17,7 +17,7 @@
             show-password
             v-model="form.password"
             placeholder="请输入密码"
-            :disabled="modalInfo.type==='edit'"
+            :disabled="modalInfo.type === 'edit'"
         >
         </el-input>
       </el-form-item>
